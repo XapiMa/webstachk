@@ -25,14 +25,24 @@ https://golang.org/doc/install/source#environment
 
 ## Usage
 ### Write target.csv 
-Write target.csv with the url, status, and access span  column in the same directory as the executable file.
+Write target.csv with the url, status, and access_time_interval  column in the same directory as the executable file.
+
+```
+url,status_code,access_time_interval
+url,status_code,access_time_interval
+url,status_code,access_time_interval
+url,status_code,access_time_interval
+url,status_code,access_time_interval
+```
+
+ex.
 ```
 http://example.com,200,20s
 https://sample.com,301|302|303,1m
 ```
 
 - Multiple status codes can be specified using a pipe('|').
-- Access span can be selected from day('d'), hour('h'), minute('m') and second('s')
+- Access time interval can be selected from day('d'), hour('h'), minute('m') and second('s')
 
 ## Execution
 ```

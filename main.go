@@ -90,7 +90,7 @@ func StatusCheck(targetPath, outputPath string, timeLimit int64, maxConnectionNu
 type target struct {
 	url      string
 	statuses []int
-	span     int
+	interval int
 }
 
 func parseTargetFile(targetPath string) ([]target, error) {
@@ -130,7 +130,7 @@ func parseTargetFile(targetPath string) ([]target, error) {
 		case 's':
 			coefficient = 1
 		default:
-			return targets, fmt.Errorf("the format of the access span is incorrect")
+			return targets, fmt.Errorf("the format of the access time interval is incorrect")
 		}
 		timeNum, err := strconv.Atoi(record[2][:len(record[2])-1])
 		if err != nil {
@@ -144,8 +144,8 @@ func parseTargetFile(targetPath string) ([]target, error) {
 }
 
 type timeRecord struct {
-	span  int64
-	start int64
+	interval int64
+	start    int64
 }
 
 func check(targets []target, outputPath string, limit int64) error {
@@ -153,7 +153,7 @@ func check(targets []target, outputPath string, limit int64) error {
 	maxConnection := make(chan bool, maxConnectionNum)
 	timeRecords := make([]timeRecord, len(targets))
 	for i, item := range targets {
-		timeRecords[i].span = int64(item.span)
+		timeRecords[i].interval = int64(item.interval)
 		timeRecords[i].start = int64(0)
 	}
 	allStart := time.Now().Unix()
@@ -166,7 +166,7 @@ func check(targets []target, outputPath string, limit int64) error {
 			}
 		}
 		for i := range timeRecords {
-			if nowTime-timeRecords[i].start >= timeRecords[i].span {
+			if nowTime-timeRecords[i].start >= timeRecords[i].interval {
 				maxConnection <- true
 				timeRecords[i].start = nowTime
 
