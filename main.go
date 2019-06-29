@@ -37,12 +37,12 @@ func main() {
 	outputPath := flag.String("o", "", "output file path. If not set, it will be output to standard output")
 	timeLimit := flag.Int("l", 0, "Monitoring time (second). In the case of 0, it is infinite")
 	maxConnectionNum := flag.Int("n", 200, "Parallel number")
-	verbose := flag.Bool("v", false, "show verbose")
+	// verbose := flag.Bool("v", false, "show verbose")
 	flag.Parse()
 
-	if !*verbose {
-		log.SetOutput(ioutil.Discard)
-	}
+	// if !*verbose {
+	// 	log.SetOutput(ioutil.Discard)
+	// }
 
 	if !exists(*configPath) {
 		logFatal(fmt.Errorf("%s is not exist", *configPath))
