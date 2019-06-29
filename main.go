@@ -34,7 +34,7 @@ func main() {
 
 	log.SetPrefix("webStatusChecker: ")
 	log.SetFlags(0)
-	targetPath := flag.String("t", filepath.Join(filepath.Dir(execPath), "target.csv"), "path to target.csv")
+	configPath := flag.String("t", filepath.Join(filepath.Dir(execPath), "config.csv"), "path to config.csv")
 	outputPath := flag.String("o", "", "output file path. If not set, it will be output to standard output")
 	timeLimit := flag.Int("l", 0, "Monitoring time (second). In the case of 0, it is infinite")
 	maxConnectionNum := flag.Int("n", 200, "Parallel number")
@@ -45,12 +45,12 @@ func main() {
 		log.SetOutput(ioutil.Discard)
 	}
 
-	if !exists(*targetPath) {
-		fmt.Fprint(os.Stderr, ("Error: target.csv is not exist.\n"))
+	if !exists(*configPath) {
+		fmt.Fprint(os.Stderr, ("Error: config.csv is not exist.\n"))
 		flag.Usage()
 		os.Exit(2)
 	}
-	if err := StatusCheck(*targetPath, *outputPath, int64(*timeLimit), *maxConnectionNum); err != nil {
+	if err := StatusCheck(*configPath, *outputPath, int64(*timeLimit), *maxConnectionNum); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -61,7 +61,7 @@ func exists(filename string) bool {
 }
 
 // StatusCheck start checking web status
-func StatusCheck(targetPath, outputPath string, timeLimit int64, maxConnectionNum int) error {
+func StatusCheck(configPath, outputPath string, timeLimit int64, maxConnectionNum int) error {
 	if outputPath != "" {
 		if !exists(outputPath) {
 			dir, file := filepath.Split(outputPath)
@@ -75,7 +75,7 @@ func StatusCheck(targetPath, outputPath string, timeLimit int64, maxConnectionNu
 		}
 	}
 
-	targets, err := parseTargetFile(targetPath)
+	targets, err := parseConfigFile(configPath)
 	if err != nil {
 		return err
 	}
@@ -93,9 +93,9 @@ type target struct {
 	interval int
 }
 
-func parseTargetFile(targetPath string) ([]target, error) {
+func parseConfigFile(configPath string) ([]target, error) {
 	var targets = []target{}
-	file, err := os.Open(targetPath)
+	file, err := os.Open(configPath)
 	failOnError(err)
 	defer file.Close()
 	reader := csv.NewReader(file) // utf8

@@ -24,8 +24,8 @@ Please refer to the official document for details of available environment.
 https://golang.org/doc/install/source#environment
 
 ## Usage
-### Write target.csv 
-Write target.csv with the url, status, and access_time_interval  column in the same directory as the executable file.
+### Write config.csv 
+Write config.csv with the url, status, and access_time_interval  column in the same directory as the executable file.
 
 ```
 url,status_code,access_time_interval
@@ -49,9 +49,9 @@ https://sample.com,301|302|303,1m
 $ webStatusChecker
 ```
 
-If you want to specify the location of target.csv :
+If you want to specify the location of config.csv :
 ```
-$ webStatusChecker -t path/to/target.csv
+$ webStatusChecker -t path/to/config.csv
 ```
 
 If you want to write the result to a file:
@@ -68,6 +68,6 @@ Usage of webStatusChecker:
   -o string
     	output file path. If not set, it will be output to standard output
   -t string
-    	path to target.csv (default "In the same directory as the executable file")
+    	path to config.csv (default "In the same directory as the executable file")
   -v	show verbose
 ```
