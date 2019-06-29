@@ -61,13 +61,10 @@ $ webStatusChecker -o path/to/output/file
 
 ```
 Usage of webStatusChecker:
-  -l int
-    	Monitoring time (second). In the case of 0, it is infinite. (default 0)
   -n int
     	Parallel number. (default 200)
   -o string
     	output file path. If not set, it will be output to standard output
   -t string
     	path to config.csv (default "In the same directory as the executable file")
-  -v	show verbose
 ```
