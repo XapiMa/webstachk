@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -13,23 +12,23 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 const (
 	maxConnectionNum = 200
 )
 
-func failOnError(err error) {
-	if err != nil {
-		log.Fatal("Error:", err)
-	}
+func logFatal(err error) {
+	log.Fatalf("Error: webStatusChecker %s %s", time.Now(), err)
 }
 
 func main() {
 
 	execPath, err := os.Executable()
 	if err != nil {
-		log.Fatal(err)
+		logFatal(err)
 	}
 
 	log.SetPrefix("webStatusChecker: ")
@@ -46,12 +45,10 @@ func main() {
 	}
 
 	if !exists(*configPath) {
-		fmt.Fprint(os.Stderr, ("Error: config.csv is not exist.\n"))
-		flag.Usage()
-		os.Exit(2)
+		logFatal(fmt.Errorf("%s is not exist", *configPath))
 	}
 	if err := StatusCheck(*configPath, *outputPath, int64(*timeLimit), *maxConnectionNum); err != nil {
-		log.Fatal(err)
+		logFatal(err)
 	}
 }
 
@@ -96,7 +93,9 @@ type target struct {
 func parseConfigFile(configPath string) ([]target, error) {
 	var targets = []target{}
 	file, err := os.Open(configPath)
-	failOnError(err)
+	if err != nil {
+		return targets, errors.Wrap(err, "couse in parseConfigFile: ")
+	}
 	defer file.Close()
 	reader := csv.NewReader(file) // utf8
 	// reader := csv.NewReader(transform.NewReader(file, japanese.ShiftJIS.NewDecoder()))
@@ -106,8 +105,8 @@ func parseConfigFile(configPath string) ([]target, error) {
 		record, err := reader.Read()
 		if err == io.EOF {
 			break
-		} else {
-			failOnError(err)
+		} else if err != nil {
+			return targets, errors.Wrap(err, "couse in parseConfigFile: ")
 		}
 		url := record[0]
 		strStatuses := strings.Split(record[1], "|")
@@ -174,7 +173,7 @@ func check(targets []target, outputPath string, limit int64) error {
 					url := targets[i].url
 					resp, err := http.Get(url)
 					if err != nil {
-						fmt.Fprintf(os.Stderr, "Error:%s %s %s\n", time.Unix(nowTime, 0), url, err)
+						fmt.Fprintf(os.Stderr, "Error: %s %s %s\n", time.Unix(nowTime, 0), url, err)
 						return
 					}
 					defer resp.Body.Close()
