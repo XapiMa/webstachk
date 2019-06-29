@@ -24,6 +24,10 @@ func logFatal(err error) {
 	log.Fatalf("Error: webStatusChecker %s %s", time.Now(), err)
 }
 
+func logPrint(err error) {
+	log.Printf("Error: webStatusChecker %s %s", time.Now(), err)
+}
+
 func main() {
 	errorWrap := func(err error) error {
 		return errors.Wrap(err, "cause in main")
@@ -185,7 +189,7 @@ func check(targets []target, outputPath string, limit int64) error {
 					url := targets[i].url
 					resp, err := http.Get(url)
 					if err != nil {
-						logFatal(errorWrap(err))
+						logPrint(errorWrap(err))
 						return
 					}
 					defer resp.Body.Close()
