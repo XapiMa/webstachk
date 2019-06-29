@@ -25,10 +25,13 @@ func logFatal(err error) {
 }
 
 func main() {
+	errorWrap := func(err error) error {
+		return errors.Wrap(err, "cause in main")
+	}
 
 	execPath, err := os.Executable()
 	if err != nil {
-		logFatal(err)
+		logFatal(errorWrap(err))
 	}
 
 	log.SetPrefix("webStatusChecker: ")
@@ -45,10 +48,10 @@ func main() {
 	// }
 
 	if !exists(*configPath) {
-		logFatal(fmt.Errorf("%s is not exist", *configPath))
+		logFatal(errorWrap(fmt.Errorf("%s is not exist", *configPath)))
 	}
 	if err := StatusCheck(*configPath, *outputPath, int64(*timeLimit), *maxConnectionNum); err != nil {
-		logFatal(err)
+		logFatal(errorWrap(err))
 	}
 }
 
@@ -59,6 +62,9 @@ func exists(filename string) bool {
 
 // StatusCheck start checking web status
 func StatusCheck(configPath, outputPath string, timeLimit int64, maxConnectionNum int) error {
+	errorWrap := func(err error) error {
+		return errors.Wrap(err, "cause in StatusCheck")
+	}
 	if outputPath != "" {
 		if !exists(outputPath) {
 			dir, file := filepath.Split(outputPath)
@@ -74,11 +80,11 @@ func StatusCheck(configPath, outputPath string, timeLimit int64, maxConnectionNu
 
 	targets, err := parseConfigFile(configPath)
 	if err != nil {
-		return err
+		return errorWrap(err)
 	}
 
 	if err := check(targets, outputPath, timeLimit); err != nil {
-		return err
+		return errorWrap(err)
 	}
 	return nil
 
@@ -91,10 +97,13 @@ type target struct {
 }
 
 func parseConfigFile(configPath string) ([]target, error) {
+	errorWrap := func(err error) error {
+		return errors.Wrap(err, "cause in parseConfigFile")
+	}
 	var targets = []target{}
 	file, err := os.Open(configPath)
 	if err != nil {
-		return targets, errors.Wrap(err, "couse in parseConfigFile: ")
+		return targets, errorWrap(err)
 	}
 	defer file.Close()
 	reader := csv.NewReader(file) // utf8
@@ -106,7 +115,7 @@ func parseConfigFile(configPath string) ([]target, error) {
 		if err == io.EOF {
 			break
 		} else if err != nil {
-			return targets, errors.Wrap(err, "couse in parseConfigFile: ")
+			return targets, errorWrap(err)
 		}
 		url := record[0]
 		strStatuses := strings.Split(record[1], "|")
@@ -129,7 +138,7 @@ func parseConfigFile(configPath string) ([]target, error) {
 		case 's':
 			coefficient = 1
 		default:
-			return targets, fmt.Errorf("the format of the access time interval is incorrect")
+			return targets, errorWrap(fmt.Errorf("the format of the access time interval is incorrect"))
 		}
 		timeNum, err := strconv.Atoi(record[2][:len(record[2])-1])
 		if err != nil {
@@ -148,6 +157,9 @@ type timeRecord struct {
 }
 
 func check(targets []target, outputPath string, limit int64) error {
+	errorWrap := func(err error) error {
+		return errors.Wrap(err, "cause in check")
+	}
 
 	maxConnection := make(chan bool, maxConnectionNum)
 	timeRecords := make([]timeRecord, len(targets))
@@ -173,7 +185,7 @@ func check(targets []target, outputPath string, limit int64) error {
 					url := targets[i].url
 					resp, err := http.Get(url)
 					if err != nil {
-						fmt.Fprintf(os.Stderr, "Error: %s %s %s\n", time.Unix(nowTime, 0), url, err)
+						logFatal(errorWrap(err))
 						return
 					}
 					defer resp.Body.Close()
