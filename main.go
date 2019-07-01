@@ -208,7 +208,7 @@ func check(targets []target, outputPath string, limit int64) error {
 								codeString += "_or_"
 							}
 						}
-						outputString := fmt.Sprintf("Warning: %s %s return status %d but expected %s\n", time.Unix(nowTime, 0), targets[i].url, resp.StatusCode, codeString)
+						outputString := fmt.Sprintf("Warning: %s %s status %d found, but expected %s\n", time.Unix(nowTime, 0).Format("2006/01/02 15:04:05"), targets[i].url, resp.StatusCode, codeString)
 						appendFile(outputPath, outputString)
 					}
 					<-maxConnection
