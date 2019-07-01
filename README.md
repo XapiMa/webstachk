@@ -11,7 +11,7 @@ or
 
 ```
 $ git clone https://github.com/XapiMa/webStatusChecker.git
-$ go build main.go
+$ go build $GOPATH/src/github.com/XapiMa/webStatusChecker
 ```
 
 If you need a different Architecture executable file:
