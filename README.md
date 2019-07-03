@@ -56,7 +56,7 @@ $ webStatusChecker -t path/to/config.csv
 
 If you want to write the result to a file:
 ```
-$ webStatusChecker -o path/to/output/file
+$ webStatusChecker -t path/to/config.csv -o path/to/output/file
 ```
 
 ```
@@ -66,5 +66,8 @@ Usage of webStatusChecker:
   -o string
     	output file path. If not set, it will be output to standard output
   -t string
-    	path to config.csv (default "In the same directory as the executable file")
+    	path to config.csv (required)
+  -i int
+      interval to self health check(second). In case of 0 it does not check
+
 ```

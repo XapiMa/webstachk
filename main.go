@@ -21,11 +21,11 @@ const (
 )
 
 func logFatal(err error) {
-	log.Fatalf("Error: webStatusChecker %s %s", time.Now(), err)
+	log.Fatalf("Error: webStatusChecker %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
 }
 
 func logPrint(err error) {
-	log.Printf("Error: webStatusChecker %s %s", time.Now(), err)
+	log.Printf("Error: webStatusChecker %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
 }
 
 func main() {
@@ -33,16 +33,11 @@ func main() {
 		return errors.Wrap(err, "cause in main")
 	}
 
-	execPath, err := os.Executable()
-	if err != nil {
-		logFatal(errorWrap(err))
-	}
-
 	log.SetPrefix("webStatusChecker: ")
 	log.SetFlags(0)
-	configPath := flag.String("t", filepath.Join(filepath.Dir(execPath), "config.csv"), "path to config.csv")
+	configPath := flag.String("t", "", "path to config.csv")
 	outputPath := flag.String("o", "", "output file path. If not set, it will be output to standard output")
-	timeLimit := flag.Int("l", 0, "Monitoring time (second). In the case of 0, it is infinite")
+	intervalTime := flag.Int("i", 60, "interval to self health check(second). In case of 0 it does not check")
 	maxConnectionNum := flag.Int("n", 200, "Parallel number")
 	// verbose := flag.Bool("v", false, "show verbose")
 	flag.Parse()
@@ -51,10 +46,13 @@ func main() {
 	// 	log.SetOutput(ioutil.Discard)
 	// }
 
-	if !exists(*configPath) {
-		logFatal(errorWrap(fmt.Errorf("%s is not exist", *configPath)))
+	if *configPath == "" {
+		logFatal(fmt.Errorf("-t option is required."))
 	}
-	if err := StatusCheck(*configPath, *outputPath, int64(*timeLimit), *maxConnectionNum); err != nil {
+	if !exists(*configPath) {
+		logFatal(fmt.Errorf("%s is not exist", *configPath))
+	}
+	if err := StatusCheck(*configPath, *outputPath, *maxConnectionNum, *intervalTime); err != nil {
 		logFatal(errorWrap(err))
 	}
 }
@@ -65,7 +63,7 @@ func exists(filename string) bool {
 }
 
 // StatusCheck start checking web status
-func StatusCheck(configPath, outputPath string, timeLimit int64, maxConnectionNum int) error {
+func StatusCheck(configPath, outputPath string, maxConnectionNum int, interval int) error {
 	errorWrap := func(err error) error {
 		return errors.Wrap(err, "cause in StatusCheck")
 	}
@@ -86,8 +84,17 @@ func StatusCheck(configPath, outputPath string, timeLimit int64, maxConnectionNu
 	if err != nil {
 		return errorWrap(err)
 	}
+	go func() {
+		if interval != 0 {
+			for {
+				str := fmt.Sprintf("Alive: %s", time.Now().Format("2006/01/02 15:04:05"))
+				appendFile(outputPath, str)
+				time.Sleep(time.Duration(interval) * time.Second)
+			}
+		}
 
-	if err := check(targets, outputPath, timeLimit); err != nil {
+	}()
+	if err := check(targets, outputPath); err != nil {
 		return errorWrap(err)
 	}
 	return nil
@@ -160,7 +167,7 @@ type timeRecord struct {
 	start    int64
 }
 
-func check(targets []target, outputPath string, limit int64) error {
+func check(targets []target, outputPath string) error {
 	errorWrap := func(err error) error {
 		return errors.Wrap(err, "cause in check")
 	}
@@ -171,15 +178,9 @@ func check(targets []target, outputPath string, limit int64) error {
 		timeRecords[i].interval = int64(item.interval)
 		timeRecords[i].start = int64(0)
 	}
-	allStart := time.Now().Unix()
 	for {
 		var nowTime int64
 		nowTime = time.Now().Unix()
-		if limit > 0 {
-			if nowTime-allStart >= limit {
-				break
-			}
-		}
 		for i := range timeRecords {
 			if nowTime-timeRecords[i].start >= timeRecords[i].interval {
 				maxConnection <- true
