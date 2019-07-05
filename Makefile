@@ -1,7 +1,7 @@
-.PHONY: flos-hortus
-webStatusChecker:
-	GOOS=linux go build -ldflags '-w -s -extldflags "-static"' -o $@
+all: webStatusChecker webStatusChecker.exe
 
-.PHONY: webStatusChecker.exe
+webStatusChecker:
+	GOOS=linux go build -ldflags '-w -s -extldflags "-static"' -o $@ ./
+
 webStatusChecker.exe:
-	GOOS=windows go build -ldflags '-w -s -extldflags "-static"' -o $@ 
+	GOOS=windows go build -ldflags '-w -s -extldflags "-static"' -o $@ ./
