@@ -1,24 +1,24 @@
-# webStatusCheck
+# webstachk
 This is a simple tool to check endpoint status.
 Access the endpoint every specified time and check if it matches the specified status.
 
 ## Installation
 ```
-$ go get github.com/XapiMa/webStatusChecker
+$ go get github.com/XapiMa/webstachk
 ```
 
 or
 
 ```
-$ git clone https://github.com/XapiMa/webStatusChecker.git
-$ go build ./webStatusChecker
+$ git clone https://github.com/XapiMa/webstachk.git
+$ go build ./webstachk
 ```
 
 If you need a different Architecture executable file:
 
 ```
- $ git clone https://github.com/XapiMa/webStatusChecker.git
- $ GOOS=linux GOARCH=amd64 go build main.go -o webStatusChecker
+ $ git clone https://github.com/XapiMa/webstachk.git
+ $ GOOS=linux GOARCH=amd64 go build main.go -o webstachk
 ```
 Please refer to the official document for details of available environment.
 https://golang.org/doc/install/source#environment
@@ -46,21 +46,21 @@ https://sample.com,301|302|303,1m
 
 ## Execution
 ```
-$ webStatusChecker
+$ webstachk
 ```
 
 If you want to specify the location of config.csv :
 ```
-$ webStatusChecker -t path/to/config.csv
+$ webstachk -t path/to/config.csv
 ```
 
 If you want to write the result to a file:
 ```
-$ webStatusChecker -t path/to/config.csv -o path/to/output/file
+$ webstachk -t path/to/config.csv -o path/to/output/file
 ```
 
 ```
-Usage of webStatusChecker:
+Usage of webstachk:
   -n int
     	Parallel number. (default 200)
   -o string

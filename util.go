@@ -1,4 +1,4 @@
-package webstatuschecker
+package webstachk
 
 import (
 	"fmt"
@@ -8,11 +8,11 @@ import (
 )
 
 func logFatal(err error) {
-	log.Fatalf("Error: webStatusChecker %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
+	log.Fatalf("Error: webstachk %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
 }
 
 func logPrint(err error) {
-	log.Printf("Error: webStatusChecker %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
+	log.Printf("Error: webstachk %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
 }
 
 func exists(filename string) bool {
