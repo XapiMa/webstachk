@@ -10,7 +10,7 @@ $ go get github.com/XapiMa/webstachk
 or
 
 ```
-$ git clone https://github.com/XapiMa/webstachk.git
+$ git clone https://github.com/XapiMa/cmd/webstachk.git
 $ go build ./webstachk
 ```
 
@@ -18,7 +18,8 @@ If you need a different Architecture executable file:
 
 ```
  $ git clone https://github.com/XapiMa/webstachk.git
- $ GOOS=linux GOARCH=amd64 go build main.go -o webstachk
+ $ cd webstachk
+ $ GOOS=linux GOARCH=amd64 go build -o webstachk ./cmd/webstachk
 ```
 Please refer to the official document for details of available environment.
 https://golang.org/doc/install/source#environment
