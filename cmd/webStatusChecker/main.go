@@ -30,12 +30,8 @@ func main() {
 	outputPath := flag.String("o", "", "output file path. If not set, it will be output to standard output")
 	intervalTime := flag.Int("i", 60, "interval to self health check(second). In case of 0 it does not check")
 	maxConnectionNum := flag.Int("n", 200, "Parallel number")
-	// verbose := flag.Bool("v", false, "show verbose")
+	// isJSON := flag.Bool("json", false, "change output format to json")
 	flag.Parse()
-
-	// if !*verbose {
-	// 	log.SetOutput(ioutil.Discard)
-	// }
 
 	if *configPath == "" {
 		logFatal(fmt.Errorf("-t option is required"))
