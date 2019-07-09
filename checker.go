@@ -40,7 +40,7 @@ func StatusCheck(configPath, outputPath string, maxConnectionNum int, interval i
 	go func() {
 		if interval != 0 {
 			for {
-				str := fmt.Sprintf("Alive: %s", time.Now().Format("2006/01/02 15:04:05"))
+				str := fmt.Sprintf("Alive: %s\n", time.Now().Format("2006/01/02 15:04:05"))
 				appendFile(outputPath, str)
 				time.Sleep(time.Duration(interval) * time.Second)
 			}
