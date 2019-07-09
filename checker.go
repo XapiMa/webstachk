@@ -116,5 +116,4 @@ func check(targets []target, outputPath string) error {
 		}
 		time.Sleep(1 * time.Second)
 	}
-	return nil
 }
