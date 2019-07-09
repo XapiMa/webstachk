@@ -4,12 +4,17 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/pkg/errors"
 	"github.com/xapima/webstatuschecker"
 )
 
+func exists(filename string) bool {
+	_, err := os.Stat(filename)
+	return err == nil
+}
 func logFatal(err error) {
 	log.Fatalf("Error: webStatusChecker %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
 }
@@ -33,7 +38,7 @@ func main() {
 	// }
 
 	if *configPath == "" {
-		logFatal(fmt.Errorf("-t option is required."))
+		logFatal(fmt.Errorf("-t option is required"))
 	}
 	if !exists(*configPath) {
 		logFatal(fmt.Errorf("%s is not exist", *configPath))
