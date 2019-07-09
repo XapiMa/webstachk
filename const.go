@@ -1,1 +1,1 @@
-package webstatuschecker
+package webstachk

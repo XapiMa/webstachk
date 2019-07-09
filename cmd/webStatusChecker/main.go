@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
-	"github.com/xapima/webstatuschecker"
+	"github.com/xapima/webstachk"
 )
 
 func exists(filename string) bool {
@@ -16,7 +16,7 @@ func exists(filename string) bool {
 	return err == nil
 }
 func logFatal(err error) {
-	log.Fatalf("Error: webStatusChecker %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
+	log.Fatalf("Error: webstachk %s %s", time.Now().Format("2006/01/02 15:04:05"), err)
 }
 
 func main() {
@@ -24,7 +24,7 @@ func main() {
 		return errors.Wrap(err, "cause in main")
 	}
 
-	log.SetPrefix("webStatusChecker: ")
+	log.SetPrefix("webstachk: ")
 	log.SetFlags(0)
 	configPath := flag.String("t", "", "path to config.csv")
 	outputPath := flag.String("o", "", "output file path. If not set, it will be output to standard output")
@@ -39,7 +39,7 @@ func main() {
 	if !exists(*configPath) {
 		logFatal(fmt.Errorf("%s is not exist", *configPath))
 	}
-	if err := webstatuschecker.StatusCheck(*configPath, *outputPath, *maxConnectionNum, *intervalTime); err != nil {
+	if err := webstachk.StatusCheck(*configPath, *outputPath, *maxConnectionNum, *intervalTime); err != nil {
 		logFatal(errorWrap(err))
 	}
 }

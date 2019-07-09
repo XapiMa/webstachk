@@ -1,4 +1,4 @@
-package webstatuschecker
+package webstachk
 
 import (
 	"fmt"
