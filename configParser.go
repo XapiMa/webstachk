@@ -11,11 +11,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-func parseConfigFile(configPath string) ([]target, error) {
+func parseConfigFile(configPath string) ([]Target, error) {
 	errorWrap := func(err error) error {
 		return errors.Wrap(err, "cause in parseConfigFile")
 	}
-	var targets = []target{}
+	var targets = []Target{}
 	file, err := os.Open(configPath)
 	if err != nil {
 		return targets, errorWrap(err)
@@ -39,7 +39,7 @@ func parseConfigFile(configPath string) ([]target, error) {
 		if err != nil {
 			return targets, errors.Wrap(err, fmt.Sprintf("cause in parseConfigFile %dth record", index+1))
 		}
-		targets = append(targets, target{url, intStatuses, interval})
+		targets = append(targets, Target{url, intStatuses, interval, int64(0)})
 	}
 	return targets, nil
 }
@@ -61,10 +61,10 @@ func parseStatuses(statuses string) ([]int, error) {
 	return intStatuses, nil
 }
 
-func parseTime(timeString string) (int, error) {
+func parseTime(timeString string) (int64, error) {
 	timeNum, err := strconv.Atoi(timeString[:len(timeString)-1])
 	if err != nil {
-		return timeNum, err
+		return int64(timeNum), err
 	}
 	switch timeString[len(timeString)-1] {
 	case 'd':
@@ -78,5 +78,5 @@ func parseTime(timeString string) (int, error) {
 	default:
 		return 0, fmt.Errorf("the format of the access time interval is incorrect")
 	}
-	return timeNum, nil
+	return int64(timeNum), nil
 }

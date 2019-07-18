@@ -20,6 +20,16 @@ func exists(filename string) bool {
 	return err == nil
 }
 
+func joinCode(codes []int, s string) string {
+	str := ""
+	for j, code := range codes {
+		str += fmt.Sprintf("%d", code)
+		if j != len(codes)-1 {
+			str += s
+		}
+	}
+	return str
+}
 func appendFile(outputPath, outputString string) error {
 	if outputPath == "" {
 		fmt.Printf("%s", outputString)

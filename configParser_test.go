@@ -62,7 +62,7 @@ func TestParseStatuses(t *testing.T) {
 func TestParseTime(t *testing.T) {
 	type data struct {
 		input  string
-		expect int
+		expect int64
 	}
 	testDatas := []data{
 		{"0s", 0},
