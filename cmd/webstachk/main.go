@@ -26,7 +26,7 @@ func main() {
 	outputPath := flag.String("o", "", "output file path. If not set, it will be output to standard output")
 	interval := flag.Int("i", 60, "interval to self health check(second). In case of 0 it does not check")
 	maxCon := flag.Int("n", 200, "Parallel number")
-	isJSON := flag.Bool("json", false, "change output format to json")
+	isJSON := flag.Bool("j", false, "change output format to json")
 	flag.Parse()
 
 	if *configPath == "" {

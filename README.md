@@ -70,5 +70,6 @@ Usage of webstachk:
     	path to config.csv (required)
   -i int
       interval to self health check(second). In case of 0 it does not check
-
+  -j bool
+      change output format to json
 ```
