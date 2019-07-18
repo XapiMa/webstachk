@@ -32,13 +32,13 @@ func joinCode(codes []int, s string) string {
 }
 func appendFile(outputPath, outputString string) error {
 	if outputPath == "" {
-		fmt.Printf("%s", outputString)
+		fmt.Printf("%s\n", outputString)
 	} else {
 		file, err := os.OpenFile(outputPath, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
 		if err != nil {
 			return err
 		}
-		file.Write(([]byte)(outputString))
+		file.Write(([]byte)(outputString + "\n"))
 		file.Close()
 	}
 	return nil

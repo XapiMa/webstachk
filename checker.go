@@ -46,11 +46,11 @@ type Checker struct {
 
 // Warning stores information of mismatched status
 type Warning struct {
-	WCode      Code      `json:"code"`
-	Url        string    `json:"url,omitempty"`
-	Expected   []int     `json:"expected,omitempty"`
-	Found      int       `json:"found,omitempty"`
-	TimeRecord time.Time `json:"time"`
+	WCode      Code   `json:"code"`
+	Url        string `json:"url,omitempty"`
+	Expected   []int  `json:"expected,omitempty"`
+	Found      int    `json:"found,omitempty"`
+	TimeRecord string `json:"time"`
 }
 
 // NewChecker create a new webstachk object
@@ -97,7 +97,6 @@ func (c *Checker) Check() error {
 
 func (t *Target) access(ch chan Warning, maxCon chan bool) {
 	<-maxCon
-	// fmt.Printf("%s %v is started at %s\n", t.Url, t.Statuses, time.Unix(t.Start, 0).Format("2006/01/02 15:04:05"))
 	resp, err := http.Get(t.Url)
 	if err != nil {
 		logPrint(errors.Wrapf(err, "couse for %s", t.Url))
@@ -110,7 +109,7 @@ func (t *Target) access(ch chan Warning, maxCon chan bool) {
 		w.Url = t.Url
 		w.Expected = t.Statuses
 		w.Found = resp.StatusCode
-		w.TimeRecord = time.Now()
+		w.TimeRecord = time.Now().Format("2006/01/02 15:04:05")
 		w.WCode = WarningCode
 		ch <- *w
 	}
@@ -129,7 +128,7 @@ func (t *Target) isMatch(status int) bool {
 // CallAlive send Alive message
 func (c *Checker) CallAlive() {
 	for {
-		w := Warning{WCode: AliveCode, TimeRecord: time.Now()}
+		w := Warning{WCode: AliveCode, TimeRecord: time.Now().Format("2006/01/02 15:04:05")}
 		c.write(w)
 		time.Sleep(time.Duration(c.Interval) * time.Second)
 	}
@@ -146,9 +145,9 @@ func (c *Checker) write(w Warning) {
 		codeString := joinCode(w.Expected, "_or_")
 		switch w.WCode {
 		case WarningCode, ErrorCode:
-			str = fmt.Sprintf("%s %s: %s status %d found, but expected %s\n", w.TimeRecord.Format("2006/01/02 15:04:05"), w.WCode, w.Url, w.Found, codeString)
+			str = fmt.Sprintf("%s %s: %s status %d found, but expected %s", w.TimeRecord, w.WCode, w.Url, w.Found, codeString)
 		case AliveCode:
-			str = fmt.Sprintf("%s %s\n", w.TimeRecord.Format("2006/01/02 15:04:05"), w.WCode)
+			str = fmt.Sprintf("%s %s", w.TimeRecord, w.WCode)
 		}
 	}
 	appendFile(c.OutputPath, str)
