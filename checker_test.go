@@ -47,10 +47,29 @@ func TestNewChecker(t *testing.T) {
 		chk.IsJSON = test.isJSON
 		chk.MaxCon = make(chan bool, test.maxc)
 		chk.Interval = int64(test.interval)
-
 		if fmt.Sprintf("%v %v %v %v", chk.Targets, chk.OutputPath, chk.IsJSON, chk.Interval) != fmt.Sprintf("%v %v %v %v", c.Targets, c.OutputPath, c.IsJSON, c.Interval) {
 			t.Errorf("NewChecker: %dth item %v found but expect %v", i, c, chk)
+		}
+	}
+}
 
+func TestIsMatch(t *testing.T) {
+
+	type data struct {
+		target Target
+		input  int
+		expect bool
+	}
+	tests := []data{
+		{Target{Statuses: []int{200}}, 200, true},
+		{Target{Statuses: []int{200}}, 301, false},
+		{Target{Statuses: []int{200, 301, 302}}, 301, true},
+		{Target{Statuses: []int{200, 301, 302}}, 404, false},
+	}
+
+	for i, test := range tests {
+		if ok := test.target.isMatch(test.input); ok != test.expect {
+			t.Errorf("[isMatch] %dth item found %v but expect %v", i, ok, test.expect)
 		}
 	}
 }
